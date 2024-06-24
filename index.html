@@ -4,7 +4,7 @@
 <canvas id="c" width="800" height="400"></canvas>
 <script>
 c=document.getElementById('c');x=c.getContext('2d');
-p={x:50,y:200,w:40,h:60,sp:0,sz:1};i=[];l=[];s=v=3;f=0;d=1;t=0;h='';bg=[];pw=[];
+p={x:50,y:200,w:40,h:60,sp:0,sz:1,swirl:false};i=[];l=[];s=v=3;f=0;d=1;t=0;h='';bg=[];pw=[];
 g=new Image();j=new Image();b=new Image();q=new Image();w=new Image();r=new Image();m=new Image();z=new Image();
 g.src='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 60"><rect width="40" height="60" fill="%23000"/><rect x="5" y="0" width="30" height="30" fill="%23f0d0b0"/><rect x="5" y="0" width="30" height="8" fill="%234a3000"/><rect x="3" y="0" width="34" height="8" fill="%234070b0"/><rect x="5" y="12" width="30" height="8" fill="%231a1a1a"/><rect x="5" y="12" width="12" height="8" fill="%23404040"/><rect x="23" y="12" width="12" height="8" fill="%23404040"/><rect x="15" y="17" width="4" height="4" fill="%23fff"/><rect x="21" y="17" width="4" height="4" fill="%23fff"/><rect x="10" y="22" width="20" height="4" fill="%23d35f5f"/><rect x="0" y="30" width="40" height="20" fill="%23fff"/><rect x="4" y="34" width="32" height="12" fill="%23f0f0f0"/><rect x="8" y="38" width="8" height="4" fill="%23f00"/><rect x="16" y="38" width="8" height="4" fill="%230f0"/><rect x="24" y="38" width="8" height="4" fill="%2300f"/><rect x="0" y="50" width="40" height="10" fill="%23a0a060"/></svg>';
 j.src='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 60"><rect width="40" height="60" fill="%235d7ca6"/><rect x="5" y="0" width="30" height="30" fill="%23f0d0b0"/><rect x="5" y="0" width="30" height="8" fill="%234a3000"/><rect x="3" y="0" width="34" height="8" fill="%23c0c0c0"/><rect x="5" y="12" width="30" height="8" fill="%231a1a1a"/><rect x="5" y="12" width="12" height="8" fill="%23404040"/><rect x="23" y="12" width="12" height="8" fill="%23404040"/><rect x="15" y="17" width="4" height="4" fill="%23fff"/><rect x="21" y="17" width="4" height="4" fill="%23fff"/><rect x="10" y="22" width="20" height="4" fill="%23d35f5f"/><rect x="0" y="30" width="40" height="20" fill="%23fff"/><rect x="4" y="34" width="32" height="12" fill="%23f0f0f0"/><rect x="8" y="38" width="24" height="4" fill="%235d7ca6"/><rect x="0" y="50" width="40" height="10" fill="%23808080"/></svg>';
@@ -28,11 +28,13 @@ if(Math.random()<.1)bg.push({x:800,y:Math.random()*400,s:Math.random()*20+10});
 if(Math.random()<.002)pw.push({x:800,y:Math.random()*340,w:30,h:30,t:Math.floor(Math.random()*3)});
 i=i.filter(o=>{o.x-=4*d;return o.x>-40&&!(p.x<o.x+o.w&&p.x+p.w>o.x&&p.y<o.y+o.h&&p.y+p.h>o.y&&(s+=(o.t?5:1),1))});
 l=l.filter(o=>{o.x-=2*d;return o.x>-o.w&&!(p.x<o.x+o.w&&p.x+p.w>o.x&&p.y<o.y+o.h&&p.y+p.h>o.y&&(v--,v<1&&(f=1),1))});
-pw=pw.filter(o=>{o.x-=3*d;return o.x>-30&&!(p.x<o.x+o.w&&p.x+p.w>o.x&&p.y<o.y+o.h&&p.y+p.h>o.y&&(o.t==0?p.sp=5:o.t==1?v++:p.sz=2,1))});
+pw=pw.filter(o=>{o.x-=3*d;return o.x>-30&&!(p.x<o.x+o.w&&p.x+p.w>o.x&&p.y<o.y+o.h&&p.y+p.h>o.y&&(o.t==0?p.swirl=true:o.t==1?v++:p.sz=2,1))});
 bg=bg.filter(o=>{o.x-=1*d;return o.x>-o.s});
 x.fillStyle='#600';x.fillRect(0,0,800,400);
 bg.forEach(o=>{x.drawImage(b,o.x,o.y,o.s,o.s)});
-x.save();x.translate(p.x+p.w/2,p.y+p.h/2);x.rotate(t/10);x.scale(p.sz,p.sz);x.drawImage(h=='g'?g:j,-p.w/2,-p.h/2,p.w,p.h);x.restore();
+x.save();x.translate(p.x+p.w/2,p.y+p.h/2);
+if(p.swirl){x.rotate(t/10);}
+x.scale(p.sz,p.sz);x.drawImage(h=='g'?g:j,-p.w/2,-p.h/2,p.w,p.h);x.restore();
 i.forEach(o=>x.drawImage(o.t?q:b,o.x,o.y,o.w,o.h));
 l.forEach(o=>{x.save();x.translate(o.x+o.w/2,o.y+o.h/2);x.rotate(-t/20);x.drawImage(w,-o.w/2,-o.h/2,o.w,o.h);x.restore()});
 pw.forEach(o=>x.drawImage(o.t==0?r:o.t==1?m:z,o.x,o.y,o.w,o.h));
@@ -42,7 +44,7 @@ x.fillStyle='#fff';x.font='20px Arial';x.fillText('Score: '+s,10,30);x.fillText(
 requestAnimationFrame(u)}else{x.fillStyle='rgba(0,0,0,0.5)';x.fillRect(0,0,800,400);x.fillStyle='#fff';x.font='30px Arial';x.fillText('Game Over. Score: '+s,300,200);x.font='20px Arial';x.fillText('Click or press G/J to restart',280,240)}
 }
 function start(ch){
-if(f||!t){p.x=50;p.y=200;p.sp=0;p.sz=1;i=[];l=[];bg=[];pw=[];s=0;v=3;f=0;t=0;d=1;h=ch;u()}
+if(f||!t){p.x=50;p.y=200;p.sp=0;p.sz=1;p.swirl=false;i=[];l=[];bg=[];pw=[];s=0;v=3;f=0;t=0;d=1;h=ch;u()}
 }
 c.onclick=e=>{
 let rect=c.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top;
